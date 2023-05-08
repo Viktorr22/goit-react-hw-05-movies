@@ -1,18 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import axios from 'axios';
-
-axios.defaults.baseURL = 'https://api.themoviedb.org/3/';
-const API_KEY = '8378c884a6341b6bb6a7cfb362550079';
-
-async function fetchFilm() {
-  try {
-    const responce = await axios.get(`trending/movie/week?api_key=${API_KEY}`);
-    return responce.data;
-  } catch (error) {
-    throw new Error(error);
-  }
-}
+import { fetchFilmHome } from '../services/api';
 
 const Home = () => {
   const location = useLocation();
@@ -20,7 +8,7 @@ const Home = () => {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    fetchFilm()
+    fetchFilmHome()
       .then(({ results, id }) => {
         const requestList = results.map(({ title, id }) => ({ title, id }));
         return { requestList };

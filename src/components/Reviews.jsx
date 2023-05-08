@@ -1,18 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import axios from 'axios';
-
-axios.defaults.baseURL = 'https://api.themoviedb.org/3/';
-const API_KEY = '8378c884a6341b6bb6a7cfb362550079';
-
-async function fetchFilm(id) {
-  try {
-    const responce = await axios.get(`movie/${id}/reviews?api_key=${API_KEY}`);
-    return responce.data;
-  } catch (error) {
-    throw new Error(error);
-  }
-}
+import { fetchFilmReviews } from '../services/api';
 
 const Reviews = () => {
   const { movieId } = useParams();
@@ -20,14 +8,13 @@ const Reviews = () => {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    fetchFilm(movieId)
+    fetchFilmReviews(movieId)
       .then(({ results }) => {
         const rewiewList = results.map(({ author, content, id }) => ({
           author,
           content,
           id,
         }));
-        console.log(rewiewList);
         return { rewiewList };
       })
       .then(({ rewiewList }) => {

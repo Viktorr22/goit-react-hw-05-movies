@@ -1,19 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import axios from 'axios';
-
-axios.defaults.baseURL = 'https://api.themoviedb.org/3/';
-const API_KEY = '8378c884a6341b6bb6a7cfb362550079';
-const IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w200/';
-
-async function fetchFilm(id) {
-  try {
-    const responce = await axios.get(`movie/${id}/credits?api_key=${API_KEY}`);
-    return responce.data;
-  } catch (error) {
-    throw new Error(error);
-  }
-}
+import { fetchFilmCast, getPoster } from '../services/api';
 
 const Cast = () => {
   const { movieId } = useParams();
@@ -21,7 +8,7 @@ const Cast = () => {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    fetchFilm(movieId)
+    fetchFilmCast(movieId)
       .then(({ cast }) => {
         const actorList = cast.map(
           ({ profile_path, original_name, character, id }) => ({
@@ -31,7 +18,6 @@ const Cast = () => {
             id,
           })
         );
-        console.log(actorList);
         return { actorList };
       })
       .then(({ actorList }) => {
@@ -47,7 +33,11 @@ const Cast = () => {
       <ul>
         {actorInfo.map(({ profile_path, original_name, character, id }) => (
           <li key={id}>
-            <img src={IMAGE_BASE_URL + profile_path} alt={original_name} />
+            <img
+              src={getPoster(profile_path)}
+              alt={original_name}
+              width={120}
+            />
             <p>{original_name}</p>
             <p>{character}</p>
           </li>
